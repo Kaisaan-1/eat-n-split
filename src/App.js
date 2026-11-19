@@ -44,7 +44,7 @@ export default function App() {
     // setSelectFriend(friend)
 
     setSelectFriend((cur) => cur?.id === friend.id ? null : friend);
-    setShowAddFriend(false);  
+    setShowAddFriend(false);
 
   }
 
@@ -65,27 +65,38 @@ export default function App() {
 
 
 function FormSplitBill({ friend }) {
+
+  const [bill, setBill] = useState("");
+  const [paidByUser, setPaidByUser] = useState("")
+  const paidByFriend = bill ? bill - paidByUser : ""
+  const [whoIsPaying, setWhoIsPaying] = useState("user")
+
+
+
   return <form className="form-split-bill">
     <h2>Split a bill with {friend.name}</h2>
     <label> 💵 Bill's value</label>
-    <input type="text"></input>
+    <input type="text" value={bill} onChange={(e) => setBill(Number(e.target.value))}></input>
 
     <label>🙍Your expense </label>
-    <input type="text"></input>
+    <input type="text" value={paidByUser}
+      onChange={(e) => setPaidByUser(Number(e.target.
+        value) > bill ? paidByUser : Number(e.target.
+          value))}></input>
 
     <label>🧑‍🤝‍🧑{friend.name}'s expense</label>
-    <input type="text" disabled></input>
+    <input type="text" disabled value={paidByFriend}></input>
 
     <label>?? Who is paying the bill</label>
-    <select>
-      <option value="user">You</option>
-      <option value="friend">X</option>
+    <select value={whoIsPaying} onChange={(e) => setWhoIsPaying(e.target.value)}>
+      <option value="user" >You</option>
+      <option value="friend">{friend.name}</option>
     </select>
     <Button>Split bill</Button>
   </form>
 }
 
-function FriendsList({ friends, onSelect , selectFriend}) {
+function FriendsList({ friends, onSelect, selectFriend }) {
 
 
   return <ul>{friends.map((friend) => (<Friend friend={friend} onSelect={onSelect} selectFriend={selectFriend} />))}</ul>
@@ -95,14 +106,14 @@ function Friend({ friend, onSelect, selectFriend }) {
 
   const isSelected = selectFriend?.id === friend.id
 
-  return <li className={isSelected? "selected":""}>
+  return <li className={isSelected ? "selected" : ""}>
     <img src={friend.image} alt={friend.name} />
     <h3>{friend.name}</h3>
     {friend.balance < 0 && <p className="red">You owe {friend.name} ${Math.abs(friend.balance)}</p>}
     {friend.balance == 0 && <p className="blue">You and {friend.name} are even </p>}
     {friend.balance > 0 && <p className="green"> {friend.name} owes you ${Math.abs(friend.balance)}</p>}
 
-    <Button onClick={()=>onSelect(friend)}>{isSelected?"close":"select"}</Button>
+    <Button onClick={() => onSelect(friend)}>{isSelected ? "close" : "select"}</Button>
   </li>
 }
 
